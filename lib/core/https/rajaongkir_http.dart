@@ -61,6 +61,7 @@ class RajaOngkirHttp extends HttpConnection {
     return [];
   }
 
+  //TODOS: APPLIED TO UI
   Future<bool> createOngkir() async {
     try {
       var body = {"origin": "501", "destination": "114", "weight": "1700", "courier": "jne"};

@@ -8,7 +8,7 @@ class ProvinceScreen extends StatefulWidget {
 }
 
 class _ProvinceScreenState extends State<ProvinceScreen> {
-  final TextEditingController _etSearch = TextEditingController();
+  String _search = "";
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +20,14 @@ class _ProvinceScreenState extends State<ProvinceScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             child: TextField(
-              controller: _etSearch,
               decoration: fieldDecoration("Search"),
+              onChanged: (value) {
+                if (mounted) {
+                  setState(() {
+                    _search = value;
+                  });
+                }
+              },
             ),
           ),
           Expanded(
@@ -32,7 +38,7 @@ class _ProvinceScreenState extends State<ProvinceScreen> {
                 if (!snapshot.hasData && snapshot.hasError) return const SizedBox(height: 300, child: Center(child: Text("Data not found")));
 
                 return ListView(
-                  children: snapshot.data!.map((e) => _items(e)).toList(),
+                  children: snapshot.data!.where((element) => element.province!.toLowerCase().contains(_search.toLowerCase())).map((e) => _items(e)).toList(),
                 );
               },
             ),
