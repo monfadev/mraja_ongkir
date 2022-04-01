@@ -13,7 +13,7 @@ class RajaOngkirHttp extends HttpConnection {
     try {
       var resp = await dio.get("province");
       if (resp.data != null && resp.statusCode == 200) {
-        log(resp.data["rajaongkir"]["results"].toString());
+        log(prettyJson(resp.data["rajaongkir"]["results"]));
         return resp.data!["rajaongkir"]["results"].map<Province>((item) => Province.fromJson(item)).toList();
       }
     } catch (e) {
@@ -26,7 +26,7 @@ class RajaOngkirHttp extends HttpConnection {
     try {
       var resp = await dio.get("city?province=$param");
       if (resp.data != null && resp.statusCode == 200) {
-        log(resp.data["rajaongkir"]["results"].toString());
+        log(prettyJson(resp.data["rajaongkir"]["results"]));
         return resp.data!["rajaongkir"]["results"].map<City>((item) => City.fromJson(item)).toList();
       }
     } catch (e) {
@@ -39,7 +39,7 @@ class RajaOngkirHttp extends HttpConnection {
     try {
       var resp = await dio.get("province");
       if (resp.data != null && resp.statusCode == 200) {
-        log(resp.data["rajaongkir"]["results"].toString());
+        log(prettyJson(resp.data["rajaongkir"]["results"]));
         return resp.data!["rajaongkir"]["results"].map<DestinationProvince>((item) => DestinationProvince.fromJson(item)).toList();
       }
     } catch (e) {
@@ -52,7 +52,7 @@ class RajaOngkirHttp extends HttpConnection {
     try {
       var resp = await dio.get("city?province=$param");
       if (resp.data != null && resp.statusCode == 200) {
-        log(resp.data["rajaongkir"]["results"].toString());
+        log(prettyJson(resp.data["rajaongkir"]["results"]));
         return resp.data!["rajaongkir"]["results"].map<DestinationCity>((item) => DestinationCity.fromJson(item)).toList();
       }
     } catch (e) {

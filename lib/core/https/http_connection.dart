@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -12,4 +14,10 @@ abstract class HttpConnection {
   }));
 
   HttpConnection(this.context);
+}
+
+String prettyJson(dynamic json) {
+  var space = ' ' * 4;
+  var encoder = JsonEncoder.withIndent(space);
+  return encoder.convert(json);
 }
