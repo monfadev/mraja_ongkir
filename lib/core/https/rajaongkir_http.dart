@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mraja_ongkir/core/https/http_connection.dart';
+import 'package:mraja_ongkir/core/models/cost.dart';
 import 'package:mraja_ongkir/core/models/province.dart';
 
 import '../models/city.dart';
@@ -61,19 +62,19 @@ class RajaOngkirHttp extends HttpConnection {
     return [];
   }
 
-  //TODOS: APPLIED TO UI
-  Future<bool> createOngkir() async {
+  Future<List<ResultCost>> createOngkir({String? cityId, String? destinationId, String? weight, String? courier}) async {
     try {
-      var body = {"origin": "501", "destination": "114", "weight": "1700", "courier": "jne"};
+      var body = {"origin": cityId, "destination": destinationId, "weight": weight, "courier": courier};
       var resp = await dio.post("cost", data: body);
 
       if (resp.data != null && resp.statusCode == 200) {
         log(resp.data.toString());
-        return true;
+        log(resp.data["rajaongkir"]["results"][0]["costs"].toString());
+        return resp.data["rajaongkir"]["results"][0]["costs"].map<ResultCost>((item) => ResultCost.fromJson(item)).toList();
       }
     } catch (e) {
       log(e.toString());
     }
-    return false;
+    return [];
   }
 }

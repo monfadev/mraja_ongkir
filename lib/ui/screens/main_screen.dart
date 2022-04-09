@@ -16,6 +16,9 @@ class _MainScreenState extends State<MainScreen> {
   DestinationProvince? toProvince;
   DestinationCity? toCity;
 
+  final TextEditingController _etWeight = TextEditingController();
+  Courier? courier;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,10 +134,49 @@ class _MainScreenState extends State<MainScreen> {
             },
             data: toCity != null ? toCity!.cityName! : "Select Destination City",
           ),
+          const SizedBox(height: 20),
+          const Text("Item Weight (kg)", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: TextField(
+              controller: _etWeight,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(border: InputBorder.none),
+            ),
+          ),
+          _items(
+            title: "Courier",
+            onTap: () {
+              if (_etWeight.text.trim().isEmpty) {
+                Flushbar(
+                  message: "Please item weight",
+                  duration: const Duration(seconds: 1),
+                  flushbarPosition: FlushbarPosition.BOTTOM,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  borderRadius: BorderRadius.circular(10),
+                ).show(context);
+              } else {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CourierScreen())).then((value) {
+                  setState(() {
+                    courier = value;
+                  });
+                });
+              }
+            },
+            data: courier != null ? courier!.description! : "Select Courier",
+          ),
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () async {
-              await RajaOngkirHttp(context).createOngkir();
+              var resp = await RajaOngkirHttp(context)
+                  .createOngkir(cityId: city?.cityId, destinationId: toCity?.cityId, weight: (double.parse(_etWeight.text) * 1000).toString(), courier: courier!.codeName);
+              if (resp.isNotEmpty) show(resp);
             },
             child: const Text("Create Ongkir"),
           ),
@@ -172,6 +214,29 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void show(List<ResultCost> data) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(courier?.description ?? "", style: const TextStyle(fontSize: 16)),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: data
+                .map((e) => ListTile(
+                      title: Text("${e.service} - Rp ${e.cost!.map((e) => e.value).join('').toString()}"),
+                      trailing: Text(e.cost!.map((e) => e.etd).toString()),
+                      subtitle: Text(e.description ?? ""),
+                    ))
+                .toList(),
+          ),
+        );
+      },
     );
   }
 }
